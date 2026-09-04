@@ -92,3 +92,10 @@ body.theme-dark .dashboard-modern .next-five-item.soon{background:#3a2d0b;color:
 @media(max-width:1150px){.dash-hero-row{grid-template-columns:repeat(3,1fr)}.dash-shift-card{grid-column:auto}.machine-dashboard-grid{grid-template-columns:repeat(2,1fr)}.dashboard-bottom-grid{grid-template-columns:1fr}}
 @media(max-width:820px){.dash-hero-row{grid-template-columns:1fr 1fr}.dash-shift-card{grid-column:span 2}}
 @media(max-width:560px){.dash-hero-row{grid-template-columns:1fr 1fr}.dash-shift-card{grid-column:span 2}.dashboard-next-five-full{padding:12px}}
+
+/* Dashboard: nasconde solo la visualizzazione dello stato turno.
+   La logica del turno e il relativo timer restano attivi. */
+.dashboard-modern .dash-shift-card,
+.dashboard-modern .dash-shift-info {
+  display: none !important;
+}

@@ -26,7 +26,7 @@ PWA offline per il monitoraggio di quattro macchine di produzione.
 - Minuti e secondi restano limitati correttamente da 00 a 59.
 
 
-## v11 Dashboard
+## v10 Dashboard
 - Rimossi dalla Dashboard i KPI "Macchine attive" e "Tempo macchine".
 - Mostrate solo le macchine attualmente in produzione.
 - Rimossi i tab di selezione delle singole macchine dalla Dashboard.

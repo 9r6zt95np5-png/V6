@@ -16,7 +16,7 @@
 <body>
 <svg class="svg-sprite" aria-hidden="true">
   <symbol id="i-dashboard" viewBox="0 0 24 24"><path d="M4 13h6V4H4v9Zm0 7h6v-5H4v5Zm10 0h6v-9h-6v9Zm0-16v5h6V4h-6Z"/></symbol>
-  <symbol id="i-machine" viewBox="0 0 24 24"><path d="M5 3h14v5H5V3Zm-1 7h16v11H4V11Zm4 3v4m4-4v4m4-4v4"/></symbol>
+  <symbol id="i-machine" viewBox="0 0 24 24"><path d="M5 3h14v5H5V3Zm-1 7h16v10H4V10Zm4 3v4m4-4v4m4-4v4"/></symbol>
   <symbol id="i-products" viewBox="0 0 24 24"><path d="M7 3h10v4H7V3Zm-2 6h14l-1 12H6L5 9Zm4 4h6"/></symbol>
   <symbol id="i-alerts" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Zm-8 12h4"/></symbol>
   <symbol id="i-shift" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9M12 7v5l3 2M17 3h4v4"/></symbol>
@@ -86,6 +86,10 @@
     <div class="content-area">
       <section id="dashboardView" class="view dashboard-modern">
         <div class="dash-hero-row">
+          <div class="dash-shift-card industrial-panel">
+            <div class="dash-card-icon blue"><svg><use href="#i-shift"/></svg></div>
+            <div><span>Turno attuale</span><strong id="dashShiftLabel">--</strong><small id="dashShiftEndTop">Fine turno: --</small></div>
+          </div>
           <div class="dash-stat-card industrial-panel"><div class="dash-card-icon red"><svg><use href="#i-alerts"/></svg></div><div><span>Prossimi avvisi</span><strong id="dashUpcomingAlerts">0</strong><small>entro 60 minuti</small></div></div>
           <div class="dash-stat-card industrial-panel"><div class="dash-card-icon amber"><svg><use href="#i-bin"/></svg></div><div><span>Cambi fusto</span><strong id="dashUpcomingBins">0</strong><small>entro 60 minuti</small></div></div>
         </div>
@@ -101,7 +105,12 @@
                 <div class="countdown-ring" id="priorityRing"><svg viewBox="0 0 44 44"><circle class="ring-bg" cx="22" cy="22" r="18"/><circle class="ring-value" cx="22" cy="22" r="18"/></svg><svg class="ring-play"><use href="#i-play"/></svg></div>
               </div>
             </div>
-
+            <aside class="priority-side dash-shift-info">
+              <span class="section-kicker">STATO TURNO</span>
+              <strong id="dashShiftCountdown">--:--:--</strong>
+              <span>tempo rimanente alla fine del turno</span>
+              <button class="btn secondary" data-open-view="shift">Gestisci turno</button>
+            </aside>
           </div>
         </section>
 
