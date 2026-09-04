@@ -930,7 +930,7 @@ function setupMachineScroller(){
 setupMachineScroller();
 
 if("serviceWorker" in navigator){
-  window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js?v=209").catch(()=>{}));
+  window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js?v=210").catch(()=>{}));
 }
 
 
@@ -986,66 +986,58 @@ function renderDashboardSummary(){
     $("span",btn).textContent = m.name || `Macchina ${index+1}`;
   });
 
-  // Programma completo della macchina selezionata fino a fine turno.
+  // Programma completo di tutte le macchine attualmente in produzione fino a fine turno.
   const scheduleBox = $("#dashMachineSchedule");
   const shiftEnd = state.shiftEnd ? new Date(state.shiftEnd) : null;
   const scheduleEvents = [];
   const now = new Date();
 
-  if (machine.lastUpdateAt && !machine.paused && num(machine.rate) > 0 && num(machine.bin) > 0) {
-    const binCalc = calculateBin(machine);
-    if (binCalc) {
-      const rate = num(machine.rate);
-      const bin = num(machine.bin);
-      // Il cambio fusto avviene al raggiungimento della capacità reale,
-      // mentre il margine resta il preavviso mostrato altrove.
-      let target = binCalc.nextMultiple;
-      for(let n=0; n<100; n++, target += bin){
-        const missing = Math.max(0, target - num(machine.counter));
-        const at = new Date(binCalc.baseTime.getTime() + missing / rate * 3600000);
-        if(shiftEnd && at > shiftEnd) break;
-        if(at >= now) scheduleEvents.push({type:"bin", title:"Cambio fusto", at});
-      }
-    }
-  }
+  state.machines.slice(0,4).forEach((machine, machineIndex) => {
+    const calc = calculateBin(machine);
+    if (!machine.lastUpdateAt || machine.paused || !calc || num(machine.rate) <= 0 || num(machine.bin) <= 0) return;
 
-  // Un solo record per avviso: eventuali duplicati presenti nello stato non devono
-  // produrre più righe identiche nel riepilogo.
-  const seenAlerts = new Set();
-  state.alerts.filter(a => num(a.machineIndex) === i).forEach(a => {
-    const alertKey = (a.name === "Uniformità" || a.name === "Uniformità per compresse")
-      ? `${num(a.machineIndex)}|${a.name}`
-      : JSON.stringify({
-          machineIndex: num(a.machineIndex),
-          name: a.name || "",
-          mode: a.mode || "",
-          intervalMinutes: num(a.intervalMinutes),
-          lastAt: a.lastAt || "",
-          updatedAt: a.updatedAt || "",
-          targetCounter: num(a.targetCounter)
+    const rate = num(machine.rate);
+    const bin = num(machine.bin);
+    let target = calc.nextMultiple;
+    for(let n=0; n<100; n++, target += bin){
+      const missing = Math.max(0, target - num(machine.counter));
+      const at = new Date(calc.baseTime.getTime() + missing / rate * 3600000);
+      if(shiftEnd && at > shiftEnd) break;
+      if(at >= now){
+        scheduleEvents.push({
+          type:"bin",
+          title:`Cambio fusto — ${machine.name || `Macchina ${machineIndex+1}`}`,
+          at
         });
-    if(seenAlerts.has(alertKey)) return;
-    seenAlerts.add(alertKey);
-
-    let ev = nextAlert(a);
-    if(!ev || !ev.at) return;
-    let count = 0;
-    while(ev && ev.at >= now && (!shiftEnd || ev.at <= shiftEnd) && count < 100){
-      scheduleEvents.push({type:ev.type || "extra", title:ev.title, at:new Date(ev.at)});
-      count++;
-      // Avvisi periodici: genera tutte le occorrenze fino a fine turno.
-      if(a.intervalMinutes){
-        ev = {...ev, at:new Date(ev.at.getTime() + Number(a.intervalMinutes)*60000)};
-      } else {
-        // Uniformità e Uniformità per compresse sono eventi singoli:
-        // devono comparire una sola volta all'orario di scadenza.
-        // Il controllo successivo verrà programmato quando l'utente lo inserirà di nuovo.
-        ev = null;
       }
     }
+
+    // Avvisi associati alla macchina in produzione.
+    const seenAlerts = new Set();
+    state.alerts.filter(a => num(a.machineIndex) === machineIndex).forEach(a => {
+      const alertKey = `${machineIndex}|${a.id || a.name || "avviso"}|${a.mode || ""}|${a.intervalMinutes || 0}|${a.lastAt || ""}|${a.targetCounter || 0}`;
+      if(seenAlerts.has(alertKey)) return;
+      seenAlerts.add(alertKey);
+
+      let ev = nextAlert(a);
+      if(!ev || !ev.at) return;
+      let count = 0;
+      while(ev && ev.at >= now && (!shiftEnd || ev.at <= shiftEnd) && count < 100){
+        scheduleEvents.push({
+          type:ev.type || "extra",
+          title:`${ev.title || "Avviso"} — ${machine.name || `Macchina ${machineIndex+1}`}`,
+          at:new Date(ev.at)
+        });
+        count++;
+        if(a.intervalMinutes){
+          ev = {...ev, at:new Date(ev.at.getTime() + Number(a.intervalMinutes)*60000)};
+        }else{
+          ev = null;
+        }
+      }
+    });
   });
 
-  // Evita che lo stesso avviso venga visualizzato più volte durante i refresh ogni secondo.
   const uniqueSchedule = new Map();
   scheduleEvents.forEach(ev => {
     const key = `${ev.type || "extra"}|${ev.title}|${Math.floor(ev.at.getTime()/1000)}`;
@@ -1087,8 +1079,6 @@ function renderIndustrialMachineCards(){
   const now = new Date();
   const shiftEnd = state.shiftEnd ? new Date(state.shiftEnd) : null;
   const activeEvents = allEvents();
-  const activeCount = state.machines.filter(m => calculateBin(m) && !m.paused).length;
-  $("#dashActiveCount").textContent = `${activeCount} / 4`;
   $("#dashShiftCountdown").textContent = shiftEnd ? fmtDuration(shiftEnd-now) : "--:--:--";
   $("#dashShiftEndTop").textContent = shiftEnd ? `Fine turno: ${fmtTime(shiftEnd)}` : "Fine turno: --";
   $("#dashShiftLabel").textContent = shiftEnd ? ({14:"MATTINA",22:"POMERIGGIO",6:"NOTTE",12:"STRAORDINARIO"}[shiftEnd.getHours()] || "TURNO ATTIVO") : "NON IMPOSTATO";
@@ -1096,52 +1086,41 @@ function renderIndustrialMachineCards(){
   const next60 = activeEvents.filter(e => e.at >= now && e.at <= new Date(now.getTime()+60*60000));
   $("#dashUpcomingAlerts").textContent = next60.filter(e => e.type !== "bin").length;
   $("#dashUpcomingBins").textContent = next60.filter(e => e.type === "bin").length;
-  const totalSeconds = state.machines.reduce((sum,m)=>{
-    if(!m.lastUpdateAt) return sum;
-    const elapsed = Math.max(0, (now-new Date(m.lastUpdateAt))/1000);
-    return sum + (m.paused ? 0 : elapsed);
-  },0);
-  $("#dashTotalMachineTime").textContent = fmtHMS(totalSeconds);
+  const activeMachines = state.machines.slice(0,4).map((m,index)=>({m,index,calc:calculateBin(m)}))
+    .filter(({m,calc}) => !!calc && !m.paused);
 
-  grid.innerHTML = state.machines.slice(0,4).map((m,index)=>{
-    const calc = calculateBin(m);
-    const running = !!calc && !m.paused;
-    const status = m.paused ? "FERMA" : running ? "ATTIVA" : "NON AVVIATA";
+  if(!activeMachines.length){
+    grid.innerHTML = `<div class="dashboard-no-production"><div class="dash-card-icon blue"><svg><use href="#i-machine"/></svg></div><strong>Nessuna macchina in produzione</strong><span>Avvia una macchina dalla sezione Macchine per visualizzarla qui.</span></div>`;
+    return;
+  }
+
+  grid.innerHTML = activeMachines.map(({m,index,calc})=>{
+    const running = true;
+    const status = "ATTIVA";
     const product = m.productName || (m.productIndex != null ? state.products[m.productIndex]?.name : "") || "Nessun prodotto";
-    let machineTime = "--:--:--";
-    if(m.lastUpdateAt){
-      machineTime = m.paused ? "FERMA" : fmtDuration(Math.max(0, now-new Date(m.lastUpdateAt)));
-    }
     const progress = calc ? Math.round(Number(calc.progress || 0)) : 0;
-    const nextBin = calc && running ? fmtTime(calc.at) : "--:--:--";
-    const nextBinRemaining = calc && running ? fmtDuration(calc.at-now) : "--:--:--";
+    const nextBin = fmtTime(calc.at);
+    const nextBinRemaining = fmtDuration(calc.at-now);
     const alert = state.alerts.filter(a=>num(a.machineIndex)===index).map(a=>nextAlert(a)).filter(e=>e && e.at).sort((a,b)=>a.at-b.at)[0];
     const alertDiff = alert ? alert.at-now : Infinity;
     const alertClass = alertDiff <= 0 ? "due" : alertDiff <= 10*60000 ? "soon" : "";
-    const statusClass = m.paused ? "paused" : running ? "running" : "";
-    const selected = index === selectedDashboardMachine() ? "selected" : "";
     return `
-      <article class="machine-dash-card ${statusClass} ${selected} ${alertClass}">
+      <article class="machine-dash-card running ${alertClass}">
         <div class="machine-dash-head"><h3>${escapeHtml(m.name || `Macchina ${index+1}`)}</h3><span class="machine-dash-status"><i></i>${status}</span></div>
         <div class="machine-dash-body">
           <div class="machine-dash-product"><small>Prodotto</small>${escapeHtml(product)}</div>
           <div class="machine-dash-kpis">
             <div class="machine-dash-kpi"><span>Produzione</span><strong>${fmtNumber(m.rate)}</strong><em>compresse/h</em></div>
-            <div class="machine-dash-kpi"><span>Tempo macchina</span><strong>${machineTime}</strong><em>hh:mm:ss</em></div>
+            <div class="machine-dash-kpi"><span>Fusto</span><strong>${fmtNumber(m.bin)}</strong><em>capacità compresse</em></div>
           </div>
           <div class="machine-dash-counter"><span>Contatore</span><strong>${fmtNumber(m.counter)}</strong><div class="machine-dash-progress"><i style="width:${Math.max(0,Math.min(100,progress))}%"></i></div></div>
-          <div class="machine-dash-next"><span>Prossimo cambio fusto</span><strong>${nextBin}</strong><small>${running ? `Tra ${nextBinRemaining}` : "Nessuna produzione attiva"}</small></div>
+          <div class="machine-dash-next"><span>Prossimo cambio fusto</span><strong>${nextBin}</strong><small>Tra ${nextBinRemaining}</small></div>
           ${alert ? `<div class="machine-dash-alert ${alertClass}"><b>${escapeHtml(alert.title || "Avviso")}</b><span>${fmtTime(alert.at)}</span></div>` : `<div class="machine-dash-alert"><b>Nessun avviso programmato</b><span>—</span></div>`}
         </div>
       </article>`;
   }).join("");
 }
 
-
-$$(".dashboard-machine-tab").forEach(btn=>btn.onclick=()=>{
-  state.dashboardMachine = Number(btn.dataset.dashboardMachine);
-  save(); renderDashboardSummary();
-});
 
 $("#mobileMenuBtn").onclick=()=>document.body.classList.toggle("sidebar-open");
 $("#sidebarScrim").onclick=()=>document.body.classList.remove("sidebar-open");

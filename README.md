@@ -24,3 +24,12 @@ PWA offline per il monitoraggio di quattro macchine di produzione.
 - Il tempo macchina degli avvisi può superare 99 ore.
 - Sono accettati valori come `100:00:00`, `125:30:00` e superiori.
 - Minuti e secondi restano limitati correttamente da 00 a 59.
+
+
+## v10 Dashboard
+- Rimossi dalla Dashboard i KPI "Macchine attive" e "Tempo macchine".
+- Mostrate solo le macchine attualmente in produzione.
+- Rimossi i tab di selezione delle singole macchine dalla Dashboard.
+- "Prossime 5 attività" spostato subito sotto "Prossima azione".
+- Programma fino a fine turno aggregato per tutte le macchine in produzione.
+- Ordine navigazione: Dashboard, Macchine, Avvisi, Prodotti, Turno.

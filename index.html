@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="style.css?v=206">
+  <link rel="stylesheet" href="style.css?v=210">
 </head>
 <body>
 <svg class="svg-sprite" aria-hidden="true">
@@ -45,8 +45,8 @@
     <nav class="side-nav" aria-label="Navigazione principale">
       <button class="tab active" data-view="dashboard"><svg><use href="#i-dashboard"/></svg><span>Dashboard</span></button>
       <button class="tab" data-view="machines"><svg><use href="#i-machine"/></svg><span>Macchine</span></button>
-      <button class="tab" data-view="products"><svg><use href="#i-products"/></svg><span>Prodotti</span></button>
       <button class="tab" data-view="alerts"><svg><use href="#i-alerts"/></svg><span>Avvisi e controlli</span><b class="nav-badge" id="alertsBadge">0</b></button>
+      <button class="tab" data-view="products"><svg><use href="#i-products"/></svg><span>Prodotti</span></button>
       <button class="tab" data-view="shift"><svg><use href="#i-shift"/></svg><span>Turno</span></button>
       <button class="tab" data-view="backup"><svg><use href="#i-backup"/></svg><span>Backup</span></button>
       <button class="tab" data-view="settings"><svg><use href="#i-settings"/></svg><span>Impostazioni</span></button>
@@ -75,8 +75,8 @@
     <nav class="mobile-tabs" aria-label="Menu mobile">
       <button class="tab active" data-view="dashboard"><svg><use href="#i-dashboard"/></svg><span>Dashboard</span></button>
       <button class="tab" data-view="machines"><svg><use href="#i-machine"/></svg><span>Macchine</span></button>
-      <button class="tab" data-view="products"><svg><use href="#i-products"/></svg><span>Prodotti</span></button>
       <button class="tab" data-view="alerts"><svg><use href="#i-alerts"/></svg><span>Avvisi</span></button>
+      <button class="tab" data-view="products"><svg><use href="#i-products"/></svg><span>Prodotti</span></button>
       <button class="tab" data-view="shift"><svg><use href="#i-shift"/></svg><span>Turno</span></button>
       <button class="tab" data-view="backup"><svg><use href="#i-backup"/></svg><span>Backup</span></button>
       <button class="tab" data-view="settings"><svg><use href="#i-settings"/></svg><span>Impostazioni</span></button>
@@ -90,10 +90,8 @@
             <div class="dash-card-icon blue"><svg><use href="#i-shift"/></svg></div>
             <div><span>Turno attuale</span><strong id="dashShiftLabel">--</strong><small id="dashShiftEndTop">Fine turno: --</small></div>
           </div>
-          <div class="dash-stat-card industrial-panel"><div class="dash-card-icon green"><svg><use href="#i-machine"/></svg></div><div><span>Macchine attive</span><strong id="dashActiveCount">0 / 4</strong><small>stato produzione</small></div></div>
           <div class="dash-stat-card industrial-panel"><div class="dash-card-icon red"><svg><use href="#i-alerts"/></svg></div><div><span>Prossimi avvisi</span><strong id="dashUpcomingAlerts">0</strong><small>entro 60 minuti</small></div></div>
           <div class="dash-stat-card industrial-panel"><div class="dash-card-icon amber"><svg><use href="#i-bin"/></svg></div><div><span>Cambi fusto</span><strong id="dashUpcomingBins">0</strong><small>entro 60 minuti</small></div></div>
-          <div class="dash-stat-card industrial-panel"><div class="dash-card-icon purple"><svg><use href="#i-timer"/></svg></div><div><span>Tempo macchine</span><strong id="dashTotalMachineTime">00:00:00</strong><small>totale attivo</small></div></div>
         </div>
 
         <section class="priority-card industrial-panel" id="priorityCard">
@@ -116,25 +114,19 @@
           </div>
         </section>
 
+        <section class="next-five-box dashboard-next-five-full industrial-panel">
+          <div class="next-five-header"><div><span class="section-kicker">PROGRAMMA IMMEDIATO</span><strong>Prossime 5 attività</strong></div><button class="text-button" data-open-view="alerts">Vedi tutte</button></div>
+          <div id="nextFiveActivities" class="next-five-list"></div>
+        </section>
+
         <section class="machine-board industrial-panel">
           <div class="board-header">
-            <div><span class="section-kicker">STATO PRODUZIONE</span><h2>Macchine</h2></div>
-            <div class="board-machine-tabs" id="dashboardMachineTabs">
-              <button class="dashboard-machine-tab active" data-dashboard-machine="0"><span>Macchina 1</span><i></i></button>
-              <button class="dashboard-machine-tab" data-dashboard-machine="1"><span>Macchina 2</span><i></i></button>
-              <button class="dashboard-machine-tab" data-dashboard-machine="2"><span>Macchina 3</span><i></i></button>
-              <button class="dashboard-machine-tab" data-dashboard-machine="3"><span>Macchina 4</span><i></i></button>
-            </div>
+            <div><span class="section-kicker">STATO PRODUZIONE</span><h2>Macchine in produzione</h2><p class="board-subtitle">Vengono visualizzate solo le macchine attualmente in produzione.</p></div>
           </div>
           <div class="machine-dashboard-grid" id="machineDashboardGrid"></div>
         </section>
 
-        <section class="dashboard-bottom-grid">
-          <div class="next-five-box dashboard-bottom-card industrial-panel">
-            <div class="next-five-header"><div><span class="section-kicker">PROGRAMMA IMMEDIATO</span><strong>Prossime 5 attività</strong></div><button class="text-button" data-open-view="alerts">Vedi tutte</button></div>
-            <div id="nextFiveActivities" class="next-five-list"></div>
-          </div>
-
+        <section class="dashboard-bottom-grid dashboard-bottom-grid-single">
           <div class="dashboard-shift-plan dashboard-bottom-card industrial-panel">
             <div class="dashboard-shift-plan-header">
               <div><span class="section-kicker">PROGRAMMA MACCHINA</span><h3>Cambi fusto e avvisi fino a fine turno</h3></div>
