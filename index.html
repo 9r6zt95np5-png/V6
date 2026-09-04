@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b5cff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="TabletTracking">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>TabletTracking</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css?v=206">
+</head>
+<body>
+<svg class="svg-sprite" aria-hidden="true">
+  <symbol id="i-dashboard" viewBox="0 0 24 24"><path d="M4 13h6V4H4v9Zm0 7h6v-5H4v5Zm10 0h6v-9h-6v9Zm0-16v5h6V4h-6Z"/></symbol>
+  <symbol id="i-machine" viewBox="0 0 24 24"><path d="M5 3h14v5H5V3Zm-1 7h16v10H4V10Zm4 3v4m4-4v4m4-4v4"/></symbol>
+  <symbol id="i-products" viewBox="0 0 24 24"><path d="M7 3h10v4H7V3Zm-2 6h14l-1 12H6L5 9Zm4 4h6"/></symbol>
+  <symbol id="i-alerts" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Zm-8 12h4"/></symbol>
+  <symbol id="i-shift" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9M12 7v5l3 2M17 3h4v4"/></symbol>
+  <symbol id="i-backup" viewBox="0 0 24 24"><path d="M4 7h16v13H4V7Zm3-4h10v4H7V3Zm5 7v6m-3-3h6"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm0-5v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10h.01"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="m9 6 8 6-8 6V6Z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 6v12m8-12v12"/></symbol>
+  <symbol id="i-counter" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M7 9h3v6H7V9Zm7 0h3v6h-3V9Z"/></symbol>
+  <symbol id="i-bin" viewBox="0 0 24 24"><path d="M7 7h10l-1 14H8L7 7Zm-1-4h12v4H6V3Zm4 8h4"/></symbol>
+  <symbol id="i-rate" viewBox="0 0 24 24"><path d="M4 17 9 12l3 3 7-8M15 7h4v4"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 5 3 8 7 10 4-2 7-5 7-10V6l-7-3Zm-3 9 2 2 4-5"/></symbol>
+  <symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v5l3 2M9 3h6"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="m4 20 4-1 10-10-3-3L5 16l-1 4Zm9-12 3 3"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M9 7V4h6v3m-8 0 1 14h8l1-14M10 11v6m4-6v6"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+</svg>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">TT</div>
+      <div class="brand-copy"><strong>TabletTracking</strong><span>Industrial Suite</span></div>
+    </div>
+
+    <nav class="side-nav" aria-label="Navigazione principale">
+      <button class="tab active" data-view="dashboard"><svg><use href="#i-dashboard"/></svg><span>Dashboard</span></button>
+      <button class="tab" data-view="machines"><svg><use href="#i-machine"/></svg><span>Macchine</span></button>
+      <button class="tab" data-view="products"><svg><use href="#i-products"/></svg><span>Prodotti</span></button>
+      <button class="tab" data-view="alerts"><svg><use href="#i-alerts"/></svg><span>Avvisi e controlli</span><b class="nav-badge" id="alertsBadge">0</b></button>
+      <button class="tab" data-view="shift"><svg><use href="#i-shift"/></svg><span>Turno</span></button>
+      <button class="tab" data-view="backup"><svg><use href="#i-backup"/></svg><span>Backup</span></button>
+      <button class="tab" data-view="settings"><svg><use href="#i-settings"/></svg><span>Impostazioni</span></button>
+      <button class="tab" data-view="info"><svg><use href="#i-info"/></svg><span>Info</span></button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span class="system-dot"></span>
+      <div><strong>Offline ready</strong><span>Dati salvati sul dispositivo</span></div>
+    </div>
+  </aside>
+
+  <main class="app-main">
+    <header class="topbar">
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Apri menu"><svg><use href="#i-menu"/></svg></button>
+      <div class="page-heading">
+        <p id="pageEyebrow">Centro di controllo</p>
+        <h1 id="pageTitle">Dashboard</h1>
+      </div>
+      <div class="topbar-actions">
+        <span class="online-pill"><i></i> Sistema operativo</span>
+        <button id="endShiftBtn" class="btn danger-outline"><svg><use href="#i-shift"/></svg>Fine turno</button>
+      </div>
+    </header>
+
+    <nav class="mobile-tabs" aria-label="Menu mobile">
+      <button class="tab active" data-view="dashboard"><svg><use href="#i-dashboard"/></svg><span>Dashboard</span></button>
+      <button class="tab" data-view="machines"><svg><use href="#i-machine"/></svg><span>Macchine</span></button>
+      <button class="tab" data-view="products"><svg><use href="#i-products"/></svg><span>Prodotti</span></button>
+      <button class="tab" data-view="alerts"><svg><use href="#i-alerts"/></svg><span>Avvisi</span></button>
+      <button class="tab" data-view="shift"><svg><use href="#i-shift"/></svg><span>Turno</span></button>
+      <button class="tab" data-view="backup"><svg><use href="#i-backup"/></svg><span>Backup</span></button>
+      <button class="tab" data-view="settings"><svg><use href="#i-settings"/></svg><span>Impostazioni</span></button>
+      <button class="tab" data-view="info"><svg><use href="#i-info"/></svg><span>Info</span></button>
+    </nav>
+
+    <div class="content-area">
+      <section id="dashboardView" class="view dashboard-modern">
+        <div class="dash-hero-row">
+          <div class="dash-shift-card industrial-panel">
+            <div class="dash-card-icon blue"><svg><use href="#i-shift"/></svg></div>
+            <div><span>Turno attuale</span><strong id="dashShiftLabel">--</strong><small id="dashShiftEndTop">Fine turno: --</small></div>
+          </div>
+          <div class="dash-stat-card industrial-panel"><div class="dash-card-icon green"><svg><use href="#i-machine"/></svg></div><div><span>Macchine attive</span><strong id="dashActiveCount">0 / 4</strong><small>stato produzione</small></div></div>
+          <div class="dash-stat-card industrial-panel"><div class="dash-card-icon red"><svg><use href="#i-alerts"/></svg></div><div><span>Prossimi avvisi</span><strong id="dashUpcomingAlerts">0</strong><small>entro 60 minuti</small></div></div>
+          <div class="dash-stat-card industrial-panel"><div class="dash-card-icon amber"><svg><use href="#i-bin"/></svg></div><div><span>Cambi fusto</span><strong id="dashUpcomingBins">0</strong><small>entro 60 minuti</small></div></div>
+          <div class="dash-stat-card industrial-panel"><div class="dash-card-icon purple"><svg><use href="#i-timer"/></svg></div><div><span>Tempo macchine</span><strong id="dashTotalMachineTime">00:00:00</strong><small>totale attivo</small></div></div>
+        </div>
+
+        <section class="priority-card industrial-panel" id="priorityCard">
+          <div class="priority-layout">
+            <div class="priority-main">
+              <div class="priority-label"><span></span>PROSSIMA AZIONE</div>
+              <h2 id="priorityTitle">Configura il turno</h2>
+              <p id="priorityDescription">Imposta macchine, prodotti e controlli per iniziare.</p>
+              <div class="priority-countdown-row">
+                <div><small>Tempo alla prossima attività</small><strong id="priorityCountdown">--:--:--</strong><span id="priorityTime">Ora: --</span></div>
+                <div class="countdown-ring" id="priorityRing"><svg viewBox="0 0 44 44"><circle class="ring-bg" cx="22" cy="22" r="18"/><circle class="ring-value" cx="22" cy="22" r="18"/></svg><svg class="ring-play"><use href="#i-play"/></svg></div>
+              </div>
+            </div>
+            <aside class="priority-side dash-shift-info">
+              <span class="section-kicker">STATO TURNO</span>
+              <strong id="dashShiftCountdown">--:--:--</strong>
+              <span>tempo rimanente alla fine del turno</span>
+              <button class="btn secondary" data-open-view="shift">Gestisci turno</button>
+            </aside>
+          </div>
+        </section>
+
+        <section class="machine-board industrial-panel">
+          <div class="board-header">
+            <div><span class="section-kicker">STATO PRODUZIONE</span><h2>Macchine</h2></div>
+            <div class="board-machine-tabs" id="dashboardMachineTabs">
+              <button class="dashboard-machine-tab active" data-dashboard-machine="0"><span>Macchina 1</span><i></i></button>
+              <button class="dashboard-machine-tab" data-dashboard-machine="1"><span>Macchina 2</span><i></i></button>
+              <button class="dashboard-machine-tab" data-dashboard-machine="2"><span>Macchina 3</span><i></i></button>
+              <button class="dashboard-machine-tab" data-dashboard-machine="3"><span>Macchina 4</span><i></i></button>
+            </div>
+          </div>
+          <div class="machine-dashboard-grid" id="machineDashboardGrid"></div>
+        </section>
+
+        <section class="dashboard-bottom-grid">
+          <div class="next-five-box dashboard-bottom-card industrial-panel">
+            <div class="next-five-header"><div><span class="section-kicker">PROGRAMMA IMMEDIATO</span><strong>Prossime 5 attività</strong></div><button class="text-button" data-open-view="alerts">Vedi tutte</button></div>
+            <div id="nextFiveActivities" class="next-five-list"></div>
+          </div>
+
+          <div class="dashboard-shift-plan dashboard-bottom-card industrial-panel">
+            <div class="dashboard-shift-plan-header">
+              <div><span class="section-kicker">PROGRAMMA MACCHINA</span><h3>Cambi fusto e avvisi fino a fine turno</h3></div>
+              <span id="dashShiftPlanEnd" class="shift-plan-end">Fine turno: --</span>
+            </div>
+            <div id="dashMachineSchedule" class="dashboard-machine-schedule"></div>
+          </div>
+        </section>
+
+        <div class="dashboard-actions-row">
+          <button class="btn primary" data-open-view="machines"><svg><use href="#i-machine"/></svg>Gestisci macchine</button>
+          <button class="btn secondary" data-open-view="alerts"><svg><use href="#i-alerts"/></svg>Apri avvisi</button>
+          <button class="btn secondary" data-open-view="shift"><svg><use href="#i-shift"/></svg>Apri turno</button>
+        </div>
+
+        <!-- Compatibilità con il motore dati esistente: questi valori restano aggiornabili anche se non visualizzati. -->
+        <div class="dashboard-legacy-bridge" aria-hidden="true">
+          <span id="dashMachineName"></span><span id="dashProduct"></span><span id="dashCounter"></span><span id="dashBin"></span><span id="dashRate"></span><span id="dashMargin"></span><span id="dashNextBin"></span><span id="dashNextBinTime"></span><span id="dashMachineTime"></span><span id="dashStartTime"></span><span id="dashProgressText"></span><span id="dashProgress"></span><span id="dashMachineStatus"></span>
+        </div>
+      </section>
+
+      <section id="machinesView" class="view hidden">
+        <div class="section-heading"><div><span class="section-kicker">GESTIONE OPERATIVA</span><h2>Macchine</h2><p>Avvia, aggiorna e controlla ogni linea di produzione.</p></div></div>
+        <div class="machine-switcher">
+          <button class="machine-jump active" data-target-machine="0">Macchina 1</button>
+          <button class="machine-jump" data-target-machine="1">Macchina 2</button>
+          <button class="machine-jump" data-target-machine="2">Macchina 3</button>
+          <button class="machine-jump" data-target-machine="3">Macchina 4</button>
+        </div>
+        <main class="machines" id="machinesScroller">
+          <section class="machine industrial-panel" data-machine="0">
+            <div class="machine-title">
+              <div><span class="section-kicker">LINEA 1</span><h2><input class="machine-name" value="Macchina 1"></h2></div>
+              <span class="machine-status">Non avviata</span>
+            </div>
+            <div class="machine-form-grid">
+              <label class="field-wide product-field">Prodotto
+  <div class="product-picker">
+    <input class="productSearch" type="search" placeholder="Cerca e seleziona prodotto..." autocomplete="off" spellcheck="false">
+    <input class="productSelect" type="hidden" value="">
+    <div class="product-options hidden"></div>
+  </div>
+</label>
+              <label>Contatore attuale<input class="counter" type="number" inputmode="numeric"></label>
+              <label>Produzione / ora<input class="rate" type="number" inputmode="numeric"></label>
+              <label>Capacità fusto<input class="bin" type="number" inputmode="numeric"></label>
+              <label>Margine sicurezza<input class="margin" type="number" inputmode="numeric" value="0"></label>
+            </div>
+            <div class="button-grid">
+              <button class="startMachine btn primary"><svg><use href="#i-play"/></svg>Avvia macchina</button>
+              <button class="pauseMachine btn secondary"><svg><use href="#i-pause"/></svg>Macchina ferma</button>
+              <button class="updateCounter btn secondary"><svg><use href="#i-counter"/></svg>Aggiorna contatore</button>
+            </div>
+            <div class="result">
+              <div class="result-top"><div><span>PROSSIMO CAMBIO FUSTO</span><strong class="countdown">--:--:--</strong></div><div><span class="changeTime">Ora: --</span><span class="changeCounter">Contatore: --</span></div></div>
+              <div class="bar"><i></i></div>
+              <details><summary>Prossimi cambi fino a fine turno</summary><ol class="schedule"></ol></details>
+            </div>
+            <div class="machine-alerts"></div>
+          </section>
+          <section class="machine industrial-panel" data-machine="1">
+            <div class="machine-title">
+              <div><span class="section-kicker">LINEA 2</span><h2><input class="machine-name" value="Macchina 2"></h2></div>
+              <span class="machine-status">Non avviata</span>
+            </div>
+            <div class="machine-form-grid">
+              <label class="field-wide product-field">Prodotto
+  <div class="product-picker">
+    <input class="productSearch" type="search" placeholder="Cerca e seleziona prodotto..." autocomplete="off" spellcheck="false">
+    <input class="productSelect" type="hidden" value="">
+    <div class="product-options hidden"></div>
+  </div>
+</label>
+              <label>Contatore attuale<input class="counter" type="number" inputmode="numeric"></label>
+              <label>Produzione / ora<input class="rate" type="number" inputmode="numeric"></label>
+              <label>Capacità fusto<input class="bin" type="number" inputmode="numeric"></label>
+              <label>Margine sicurezza<input class="margin" type="number" inputmode="numeric" value="0"></label>
+            </div>
+            <div class="button-grid">
+              <button class="startMachine btn primary"><svg><use href="#i-play"/></svg>Avvia macchina</button>
+              <button class="pauseMachine btn secondary"><svg><use href="#i-pause"/></svg>Macchina ferma</button>
+              <button class="updateCounter btn secondary"><svg><use href="#i-counter"/></svg>Aggiorna contatore</button>
+            </div>
+            <div class="result">
+              <div class="result-top"><div><span>PROSSIMO CAMBIO FUSTO</span><strong class="countdown">--:--:--</strong></div><div><span class="changeTime">Ora: --</span><span class="changeCounter">Contatore: --</span></div></div>
+              <div class="bar"><i></i></div>
+              <details><summary>Prossimi cambi fino a fine turno</summary><ol class="schedule"></ol></details>
+            </div>
+            <div class="machine-alerts"></div>
+          </section>
+          <section class="machine industrial-panel" data-machine="2">
+            <div class="machine-title">
+              <div><span class="section-kicker">LINEA 3</span><h2><input class="machine-name" value="Macchina 3"></h2></div>
+              <span class="machine-status">Non avviata</span>
+            </div>
+            <div class="machine-form-grid">
+              <label class="field-wide product-field">Prodotto
+  <div class="product-picker">
+    <input class="productSearch" type="search" placeholder="Cerca e seleziona prodotto..." autocomplete="off" spellcheck="false">
+    <input class="productSelect" type="hidden" value="">
+    <div class="product-options hidden"></div>
+  </div>
+</label>
+              <label>Contatore attuale<input class="counter" type="number" inputmode="numeric"></label>
+              <label>Produzione / ora<input class="rate" type="number" inputmode="numeric"></label>
+              <label>Capacità fusto<input class="bin" type="number" inputmode="numeric"></label>
+              <label>Margine sicurezza<input class="margin" type="number" inputmode="numeric" value="0"></label>
+            </div>
+            <div class="button-grid">
+              <button class="startMachine btn primary"><svg><use href="#i-play"/></svg>Avvia macchina</button>
+              <button class="pauseMachine btn secondary"><svg><use href="#i-pause"/></svg>Macchina ferma</button>
+              <button class="updateCounter btn secondary"><svg><use href="#i-counter"/></svg>Aggiorna contatore</button>
+            </div>
+            <div class="result">
+              <div class="result-top"><div><span>PROSSIMO CAMBIO FUSTO</span><strong class="countdown">--:--:--</strong></div><div><span class="changeTime">Ora: --</span><span class="changeCounter">Contatore: --</span></div></div>
+              <div class="bar"><i></i></div>
+              <details><summary>Prossimi cambi fino a fine turno</summary><ol class="schedule"></ol></details>
+            </div>
+            <div class="machine-alerts"></div>
+          </section>
+          <section class="machine industrial-panel" data-machine="3">
+            <div class="machine-title">
+              <div><span class="section-kicker">LINEA 4</span><h2><input class="machine-name" value="Macchina 4"></h2></div>
+              <span class="machine-status">Non avviata</span>
+            </div>
+            <div class="machine-form-grid">
+              <label class="field-wide product-field">Prodotto
+  <div class="product-picker">
+    <input class="productSearch" type="search" placeholder="Cerca e seleziona prodotto..." autocomplete="off" spellcheck="false">
+    <input class="productSelect" type="hidden" value="">
+    <div class="product-options hidden"></div>
+  </div>
+</label>
+              <label>Contatore attuale<input class="counter" type="number" inputmode="numeric"></label>
+              <label>Produzione / ora<input class="rate" type="number" inputmode="numeric"></label>
+              <label>Capacità fusto<input class="bin" type="number" inputmode="numeric"></label>
+              <label>Margine sicurezza<input class="margin" type="number" inputmode="numeric" value="0"></label>
+            </div>
+            <div class="button-grid">
+              <button class="startMachine btn primary"><svg><use href="#i-play"/></svg>Avvia macchina</button>
+              <button class="pauseMachine btn secondary"><svg><use href="#i-pause"/></svg>Macchina ferma</button>
+              <button class="updateCounter btn secondary"><svg><use href="#i-counter"/></svg>Aggiorna contatore</button>
+            </div>
+            <div class="result">
+              <div class="result-top"><div><span>PROSSIMO CAMBIO FUSTO</span><strong class="countdown">--:--:--</strong></div><div><span class="changeTime">Ora: --</span><span class="changeCounter">Contatore: --</span></div></div>
+              <div class="bar"><i></i></div>
+              <details><summary>Prossimi cambi fino a fine turno</summary><ol class="schedule"></ol></details>
+            </div>
+            <div class="machine-alerts"></div>
+          </section>
+        </main>
+      </section>
+
+      <section id="productsView" class="view hidden">
+        <div class="section-heading"><div><span class="section-kicker">DATABASE PRODUZIONE</span><h2>Prodotti</h2><p>Parametri standard pronti per il caricamento sulle macchine.</p></div></div>
+        <div class="two-column-layout">
+          <section class="setup-card industrial-panel form-panel">
+            <div class="panel-title"><div class="panel-icon"><svg><use href="#i-products"/></svg></div><div><h2>Nuovo prodotto</h2><p>Crea o modifica una configurazione.</p></div></div>
+            <div class="grid">
+              <label>Nome prodotto<input id="productName" type="text" placeholder="Es. Prodotto A"></label>
+              <label>Produzione / ora<input id="productRate" type="number" inputmode="numeric"></label>
+              <label>Capacità fusto<input id="productBin" type="number" inputmode="numeric"></label>
+              <label>Margine predefinito<input id="productMargin" type="number" inputmode="numeric" value="0"></label>
+            </div>
+            <label>Macchina preferita<select id="productMachine"></select></label>
+            <button id="saveProductBtn" class="btn primary full-width"><svg><use href="#i-products"/></svg>Salva prodotto</button>
+          </section>
+          <section class="setup-card industrial-panel list-panel">
+            <div class="panel-title"><div><h2>Prodotti salvati</h2><p>Archivio configurazioni disponibili.</p></div><span class="count-chip" id="productCount">0</span></div>
+            <div id="productList" class="list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="alertsView" class="view hidden">
+        <div class="section-heading"><div><span class="section-kicker">QUALITÀ E CONTROLLO</span><h2>Avvisi e controlli</h2><p>Programma controlli e scadenze per ogni macchina.</p></div></div>
+        <div class="two-column-layout alerts-layout">
+          <section class="setup-card industrial-panel form-panel">
+            <div class="panel-title"><div class="panel-icon"><svg><use href="#i-alerts"/></svg></div><div><h2>Nuovo avviso</h2><p>Configura una nuova attività.</p></div></div>
+            <div class="grid">
+              <label>Tipo avviso<select id="alertName"><option>Uniformità</option><option>Uniformità per compresse</option><option>Friabilità</option><option>Disgregazione</option><option>Stampa PDF</option><option>Altro controllo</option></select></label>
+              <label>Macchina<select id="alertMachine"></select></label>
+              <label id="alertHoursWrap">Ripeti ogni ore<input id="alertHours" type="number" inputmode="decimal" step="0.5" value="8"></label>
+              <label id="alertLastTimeWrap">Ultimo fatto alle<input id="alertLastTime" type="time"></label>
+              <label id="machineHoursWrap" class="hidden">Tempo macchina attuale<input id="machineHoursInput" type="tel" inputmode="numeric" placeholder="HHH:MM:SS · es. 125:30:00" aria-label="Tempo macchina, anche oltre 100 ore"></label>
+              <label id="uniformityTabletsWrap" class="hidden">Controllo a numero compresse<input id="uniformityTabletsInput" type="number" inputmode="numeric" placeholder="Es. 40000"></label>
+              <label id="uniformityCounterWrap" class="hidden">Contatore attuale<input id="uniformityCounterInput" type="number" inputmode="numeric" placeholder="Se vuoto usa quello macchina"></label>
+            </div>
+            <div class="form-actions"><button id="lastNowBtn" class="btn secondary">Ultimo fatto ora</button><button id="addAlertBtn" class="btn primary"><svg><use href="#i-alerts"/></svg>Aggiungi avviso</button></div>
+          </section>
+          <section class="setup-card industrial-panel list-panel">
+            <div class="panel-title"><div><h2>Avvisi attivi</h2><p>Attività ordinate per scadenza.</p></div><span class="count-chip" id="alertCount">0</span></div>
+            <div id="alertList" class="list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="shiftView" class="view hidden">
+        <div class="section-heading"><div><span class="section-kicker">GESTIONE TURNO</span><h2>Turno</h2><p>Imposta la fine turno e controlla lo stato generale.</p></div></div>
+        <div class="shift-dashboard">
+          <section class="setup-card industrial-panel">
+            <div class="panel-title"><div class="panel-icon"><svg><use href="#i-shift"/></svg></div><div><h2>Orario di fine turno</h2><p>Scegli un turno standard o imposta quello straordinario.</p></div></div>
+            <div class="shift-buttons">
+              <button class="btn shift-option" data-shift="14:00"><strong>Mattina</strong><span>Fine 14:00</span></button>
+              <button class="btn shift-option" data-shift="22:00"><strong>Pomeriggio</strong><span>Fine 22:00</span></button>
+              <button class="btn shift-option" data-shift="06:00"><strong>Notte</strong><span>Fine 06:00</span></button>
+              <button class="btn shift-option" data-shift="12:00"><strong>Straordinario</strong><span>Fine 12:00</span></button>
+            </div>
+            <label>Fine turno scelta<input id="shiftEndDisplay" type="text" readonly placeholder="Non impostata"></label>
+          </section>
+          <section class="setup-card industrial-panel shift-summary">
+            <div class="panel-title"><div><h2>Riepilogo operativo</h2><p>Stato attuale della produzione.</p></div></div>
+            <div class="summary-metrics">
+              <div><span>Macchine in produzione</span><strong id="shiftActiveMachines">0 / 4</strong></div>
+              <div><span>Avvisi attivi</span><strong id="shiftAlertCount">0</strong></div>
+              <div><span>Prodotti salvati</span><strong id="shiftProductCount">0</strong></div>
+              <div><span>Tempo al termine</span><strong id="shiftRemaining">--:--:--</strong></div>
+            </div>
+            <button class="btn danger full-width" id="endShiftSecondary"><svg><use href="#i-shift"/></svg>Termina turno e pulisci tutto</button>
+          </section>
+        </div>
+      </section>
+
+      <section id="backupView" class="view hidden">
+        <div class="section-heading"><div><span class="section-kicker">SICUREZZA DATI</span><h2>Backup</h2><p>Esporta e ripristina tutte le informazioni dell’app.</p></div></div>
+        <div class="two-column-layout">
+          <section class="setup-card industrial-panel form-panel">
+            <div class="panel-title"><div class="panel-icon"><svg><use href="#i-backup"/></svg></div><div><h2>Backup dati</h2><p>Prodotti, macchine, turno e avvisi.</p></div></div>
+            <button id="exportBtn" class="btn primary full-width"><svg><use href="#i-backup"/></svg>Esporta backup</button>
+            <label class="import-label">Importa backup<input id="importFile" type="file" accept="application/json"></label>
+          </section>
+          <section class="setup-card industrial-panel list-panel">
+            <div class="panel-title"><div><h2>Registro feedback</h2><p>Annotazioni e migliorie raccolte durante i turni.</p></div></div>
+            <textarea id="feedbackText" placeholder="Scrivi una miglioria o un problema trovato durante il turno..."></textarea>
+            <button id="saveFeedbackBtn" class="btn secondary">Salva feedback</button>
+            <div id="feedbackList" class="list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="settingsView" class="view hidden">
+        <div class="section-heading"><div><span class="section-kicker">PERSONALIZZAZIONE</span><h2>Impostazioni</h2><p>Scegli lo stile più adatto all’ambiente di lavoro.</p></div></div>
+        <section class="setup-card industrial-panel settings-panel">
+          <div class="panel-title"><div class="panel-icon"><svg><use href="#i-settings"/></svg></div><div><h2>Tema Dashboard</h2><p>La scelta viene salvata automaticamente sul dispositivo.</p></div></div>
+          <div class="theme-gallery">
+            <button id="themeLightBtn" class="theme-card" data-theme-choice="light"><span class="theme-preview preview-light"><i></i><b></b></span><strong>Clean Light</strong><small>Chiaro, elegante e leggibile</small></button>
+            <button id="themeDarkBtn" class="theme-card" data-theme-choice="dark"><span class="theme-preview preview-dark"><i></i><b></b></span><strong>Industrial Dark</strong><small>Scuro, tecnico e ad alto contrasto</small></button>
+            <button id="themeBlueBtn" class="theme-card" data-theme-choice="blue"><span class="theme-preview preview-blue"><i></i><b></b></span><strong>Blue Control</strong><small>Blu sala controllo</small></button>
+            <button id="themeCompactBtn" class="theme-card" data-theme-choice="compact"><span class="theme-preview preview-compact"><i></i><b></b></span><strong>Compact Operator</strong><small>Più dati in meno spazio</small></button>
+          </div>
+        </section>
+      </section>
+
+      <section id="infoView" class="view hidden">
+        <div class="section-heading"><div><span class="section-kicker">SISTEMA</span><h2>Informazioni</h2><p>Dettagli della versione installata.</p></div></div>
+        <section class="setup-card industrial-panel info-panel">
+          <div class="info-logo">TT</div>
+          <h2>TabletTracking Industrial Suite</h2>
+          <p>Assistente offline per produzione, cambio fusti, controlli di qualità e gestione avvisi.</p>
+          <div class="info-grid"><div><span>Versione</span><strong>2.0.1</strong></div><div><span>Modalità</span><strong>Offline</strong></div><div><span>Archiviazione</span><strong>Locale</strong></div><div><span>Piattaforma</span><strong>PWA</strong></div></div>
+        </section>
+      </section>
+    </div>
+
+    <footer><span>TabletTracking v2.0.1</span><span>Offline ready</span></footer>
+  </main>
+</div>
+
+<div class="sidebar-scrim" id="sidebarScrim"></div>
+<div id="shiftStartupModal" class="modal hidden">
+  <div class="modal-box">
+    <div class="modal-icon"><svg><use href="#i-shift"/></svg></div>
+    <h2>In che turno lavori?</h2>
+    <p>Seleziona il turno per impostare automaticamente l'orario di fine turno.</p>
+    <button class="btn primary" data-startup-shift="14:00">Mattina · fine 14:00</button>
+    <button class="btn primary" data-startup-shift="22:00">Pomeriggio · fine 22:00</button>
+    <button class="btn primary" data-startup-shift="06:00">Notte · fine 06:00</button>
+    <button class="btn primary" data-startup-shift="12:00">Straordinario · fine 12:00</button>
+  </div>
+</div>
+
+<div id="startModal" class="modal hidden">
+  <div class="modal-box">
+    <div class="modal-icon"><svg><use href="#i-play"/></svg></div>
+    <h2>Avvia macchina</h2>
+    <p>Scegli da quale orario deve partire il calcolo della produzione.</p>
+    <button id="startNowChoice" class="btn primary">Ora attuale</button>
+    <button id="startManualChoice" class="btn secondary">Orario manuale</button>
+    <button id="startCancelChoice" class="btn ghost">Annulla</button>
+  </div>
+</div>
+<script src="app.js?v=202"></script>
+</body>
+</html>
